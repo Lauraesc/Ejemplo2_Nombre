@@ -1,6 +1,7 @@
 ﻿using API_Sat_2023II.DAL.Entities;
 using API_Sat_2023II.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 
 namespace API_Sat_2023II.Domain.Services
 {   
@@ -51,6 +52,63 @@ namespace API_Sat_2023II.Domain.Services
                 //esta excepción me captura un mensaje cuando el país ya existe (duplicados)
                 throw new Exception(dbUpdateException.InnerException?.Message ?? dbUpdateException.Message);
                 //coallesences notation
+            }
+        }
+
+        /*recordar la importancia de indicar el 'async' en el método */
+        public async Task<Country> GetCountryByIdAsync(Guid id)
+        {
+            //diferentes formas de obtener el país:
+            return await _context.Countries.FindAsync(id); //FindAsync es un método propio del DbContext (DbSet)
+            //return await _context.Countries.FirstAsync(x => x.Id == id); este usa una lambda expression en paréntesis y es de EF Core
+            //return await _context.Countries.FirstOrDefaultAsync(id); este método también usa lambda expression y es de EF Core
+
+        }
+
+        public async Task<Country> GetCountryByNameAsync(string name)
+        {
+            return await _context.Countries.FirstOrDefaultAsync(c => c.Name == name);
+        }
+
+        public async Task<Country> EditCountryAsync(Country country)
+        {
+            try
+            {
+                
+                country.ModifiedDate = DateTime.Now;
+
+                _context.Countries.Update(country); //el método Update de EF Core sirve para actualizar un objeto
+                await _context.SaveChangesAsync(); //actualizar para el país lo que se acaba de indicar
+
+                return country;
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+          
+                throw new Exception(dbUpdateException.InnerException?.Message ?? dbUpdateException.Message);
+   
+            }
+        }
+
+        public async Task<Country> DeleteCountryAsync(Guid id)
+        {
+            try
+            {
+                //Aquí con el ID que se trae desde el controller, se está recuperando el país que luego se va a eliminar
+                //el país que se recupera, se guarda en la variable country
+                var country = await _context.Countries.FirstOrDefaultAsync(c => c.Id == id);
+
+                if (country == null) return null; //si el país no existe, esto retorna un null
+                _context.Countries.Remove(country);
+                await _context.SaveChangesAsync();
+
+                return country;
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+
+                throw new Exception(dbUpdateException.InnerException?.Message ?? dbUpdateException.Message);
+
             }
         }
 

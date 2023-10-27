@@ -13,5 +13,13 @@ namespace API_Sat_2023II.Domain.Interfaces
 
         //se va a devolver un solo país, entonces singular
         Task<Country> CreateCountryAsync(Country country);
+
+        Task<Country> GetCountryByIdAsync(Guid id);
+        //firma de editar
+        Task<Country> GetCountryByNameAsync(string name);
+
+        Task<Country> EditCountryAsync(Country country);
+        Task<Country> DeleteCountryAsync(Guid id);
+
     }
 }

@@ -24,7 +24,7 @@ namespace API_Sat_2023II.Controllers
          para un país en específico se va a crear otro método */
 
         [HttpGet, ActionName("Get")] //DataNotation
-        [Route("Get")] //Aquí concateno a URL inicial: URL = api/countries/Get
+        [Route("GetAll")] //Aquí concateno a URL inicial: URL = api/countries/Get
         public async Task<ActionResult<IEnumerable<Country>>> GetCountriesAsync() 
         {
             //aquí se está yendo a la capa de domain para traer la lista de países.
@@ -65,5 +65,52 @@ namespace API_Sat_2023II.Controllers
                 return Conflict(ex.Message); //
             }
         }
+
+        [HttpGet, ActionName("Get")] //DataNotation
+        [Route("GetById/{id}")] //Aquí concateno la URL inicial: URL = api/countries/Get
+        public async Task<ActionResult<Country>> GetCountryByIdAsync(Guid id)
+        {
+            if (id == null) return BadRequest("Id es requerido!"); //validación del id, por si es 
+
+            //aquí se está yendo a la capa de domain para traer el país.
+            var country = await _countryService.GetCountryByIdAsync(id);  //está trayendo la dependencia del servicio más el método
+
+            if (country == null) return NotFound();//si country es nulo o si está vacío
+
+            //si encuentra al menos un país, retorna un OK
+            return Ok(country);  //Ok = 200 HTTP Status Code  y está adentro el país que se va a mostrar
+        }
+
+        [HttpGet, ActionName("Get")] //DataNotation
+        [Route("GetByName/{name}")] //Aquí concateno la URL inicial: URL = api/countries/Get
+        public async Task<ActionResult<Country>> GetCountryByNameAsync(string name)
+        {
+            if (name == null) return BadRequest("Nombre del país requerido!"); //validación del id, por si es 
+
+            //aquí se está yendo a la capa de domain para traer el país.
+            var country = await _countryService.GetCountryByNameAsync(name);  //está trayendo la dependencia del servicio más el método
+
+            if (country == null) return NotFound();//si country es nulo o si está vacío
+
+            //si encuentra al menos un país, retorna un OK
+            return Ok(country);  //Ok = 200 HTTP Status Code  y está adentro el país que se va a mostrar
+        }
+
+        [HttpDelete, ActionName("Delete")] 
+        [Route("Delete")] 
+        public async Task<ActionResult<Country>> DeleteCountryAsync(Guid id)
+        {
+            
+                if (id == null) return BadRequest("Id es requerido");    
+                //se igual al método que se va a llamar de la interfaz
+                var deletedCountry = await _countryService.DeleteCountryAsync(id);
+
+
+                if (deletedCountry == null) return NotFound("País no encontrado");
+
+                return Ok(deletedCountry);  //retorne 200 y el objeto Country
+        }
+
+
     }
 }
