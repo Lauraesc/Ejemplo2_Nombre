@@ -8,5 +8,9 @@ namespace API_Sat_2023II.DAL.Entities
         [MaxLength(50, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres")] //Longitud de carácteres máxima
         [Required(ErrorMessage = "¡El campo {0} es obligatorio!")] //0 = "País", 1 = '50'
         public string Name { get; set; } //varchar(50)
+
+        [Display(Name = "Estados")]
+        //relacion con State
+        public ICollection<State>? States { get; set; }
     }
 }
