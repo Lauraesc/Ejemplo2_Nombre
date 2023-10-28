@@ -55,16 +55,6 @@ namespace API_Sat_2023II.Domain.Services
             }
         }
 
-        /*recordar la importancia de indicar el 'async' en el método */
-        public async Task<Country> GetCountryByIdAsync(Guid id)
-        {
-            //diferentes formas de obtener el país:
-            return await _context.Countries.FindAsync(id); //FindAsync es un método propio del DbContext (DbSet)
-            //return await _context.Countries.FirstAsync(x => x.Id == id); este usa una lambda expression en paréntesis y es de EF Core
-            //return await _context.Countries.FirstOrDefaultAsync(id); este método también usa lambda expression y es de EF Core
-
-        }
-
         public async Task<State> GetStateByIdAsync(Guid id)
         {
             return await _context.States.FirstOrDefaultAsync(s => s.Id == id);

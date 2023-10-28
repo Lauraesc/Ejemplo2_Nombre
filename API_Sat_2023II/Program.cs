@@ -1,3 +1,4 @@
+using API_Sat_2023II.DAL;
 using API_Sat_2023II.DAL.Entities;
 using API_Sat_2023II.Domain.Interfaces;
 using API_Sat_2023II.Domain.Services;
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<DataBaseContext>(o => o.UseSqlServer(builder.Confi
 
 
 builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IStateService, StateService>();
+builder.Services.AddTransient<SeederDB>();
 //Por cada nuevo servicio/interfaz que yo creo en mi API, debo agregar aquí esa nueva dependencia
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -25,6 +28,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+SeederData();
+void SeederData()
+{
+    IServiceScopeFactory? scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    using (IServiceScope? scope = scopedFactory.CreateScope())
+    {
+        SeederDB? service = scope.ServiceProvider.GetService<SeederDB>();
+        service.SeederAsync().Wait();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
