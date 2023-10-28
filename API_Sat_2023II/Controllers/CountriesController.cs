@@ -96,6 +96,24 @@ namespace API_Sat_2023II.Controllers
             return Ok(country);  //Ok = 200 HTTP Status Code  y está adentro el país que se va a mostrar
         }
 
+        [HttpPut, ActionName("Edit")]
+        [Route("Edit")]
+        public async Task<ActionResult<Country>> EditCountryAsync(Country country)
+        {
+            try
+            {
+                var editedCountry = await _countryService.EditCountryAsync(country);
+                return Ok(editedCountry);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("duplicate"))
+                    return Conflict(String.Format("{0} ya existe", country.Name));
+
+                return Conflict(ex.Message);
+            }
+        }
+
         [HttpDelete, ActionName("Delete")] 
         [Route("Delete")] 
         public async Task<ActionResult<Country>> DeleteCountryAsync(Guid id)

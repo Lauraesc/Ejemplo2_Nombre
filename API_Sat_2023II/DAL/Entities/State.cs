@@ -15,6 +15,6 @@ namespace API_Sat_2023II.DAL.Entities
         public Country? Country { get; set; } //Este representa un objeto de COUNTRY, el '?' es para hacerlo nuleable para que no haya error
 
         [Display(Name = "Id País")]
-        public Guid CountryId { get; set; } //FK
+        public Guid? CountryId { get; set; } //FK
     }
 }
